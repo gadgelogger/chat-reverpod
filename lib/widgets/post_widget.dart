@@ -1,10 +1,12 @@
+import 'package:chat/providers/auth_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../models/post/post.dart';
 
-class PostWidget extends StatelessWidget {
+class PostWidget extends ConsumerWidget {
   const PostWidget({
     Key? key,
     required this.post,
@@ -13,7 +15,8 @@ class PostWidget extends StatelessWidget {
   final Post post;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final uid = ref.read(uidProvider).value ?? '';
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -40,7 +43,8 @@ class PostWidget extends StatelessWidget {
                     ),
                     Text(
                       // toDate() で Timestamp から DateTime に変換できます。
-                      DateFormat('MM/dd HH:mm').format(post.createdAt!),
+                      DateFormat('MM/dd HH:mm')
+                          .format(post.createdAt ?? DateTime.now()),
                       style: const TextStyle(fontSize: 10),
                     ),
                   ],
@@ -69,12 +73,11 @@ class PostWidget extends StatelessWidget {
                     /// if文もこのRowの上に移動して、それぞれのボタンに書いていたものは削除してOKです。
                     ///
                     ///  List の中の場合は if 文であっても {} この波かっこはつけなくてよい
-                    if (FirebaseAuth.instance.currentUser!.uid == post.posterId)
+                    if (uid == post.posterId)
                       Row(
                         children: [
                           /// 編集ボタン
-                          if (FirebaseAuth.instance.currentUser!.uid ==
-                              post.posterId)
+                          if (uid == post.posterId)
                             IconButton(
                               onPressed: () {
                                 showDialog(

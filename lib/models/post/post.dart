@@ -17,7 +17,9 @@ class Post {
     // map データが得られているのでここからはいつもと同じです。
     return Post(
       text: map['text'],
-      createdAt: (map['createdAt'] as Timestamp).toDate(),
+      createdAt: map['createdAt'] != null
+          ? (map['createdAt'] as Timestamp).toDate()
+          : null,
       posterName: map['posterName'],
       posterImageUrl: map['posterImageUrl'],
       posterId: map['posterId'],
